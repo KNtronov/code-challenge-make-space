@@ -19,8 +19,29 @@
         <junit.version>5.9.2</junit.version>
         <assertj.version>3.24.2</assertj.version>
     </properties>
-g
+    g
     <dependencies>
+
+        <!-- Persistence -->
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>10.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
+        </dependency>
+
+        <!-- Testing -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -42,7 +63,5 @@ g
     </dependencies>
 
     <build>
-        <plugins>
-        </plugins>
     </build>
 </project>

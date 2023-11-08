@@ -26,3 +26,9 @@ Input Constraints
     1. Time will be in HH:MM (24 hours) format.
     2. Time input should always consider the 15 minute time interval
     3. For all the time inputs end_time > start_time
+
+## Running this project
+
+TODO...
+
+Make sure to create the database `makespace`.
