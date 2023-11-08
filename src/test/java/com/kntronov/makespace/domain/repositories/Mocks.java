@@ -4,7 +4,6 @@ import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.SystemState;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class Mocks {
 
@@ -25,12 +24,6 @@ public class Mocks {
     }
 
     public static abstract class BookingRepositoryMock implements BookingRepository {
-
-        @Override
-        public List<Booking> findByDate(LocalDate date) {
-            throw new MethodNotMockedException();
-        }
-
         @Override
         public Booking save(Booking booking) {
             throw new MethodNotMockedException();
