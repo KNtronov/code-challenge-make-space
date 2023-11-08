@@ -1,0 +1,153 @@
+package com.kntronov.makespace.domain.services;
+
+import com.kntronov.makespace.domain.entities.Booking;
+import com.kntronov.makespace.domain.entities.Room;
+import com.kntronov.makespace.domain.entities.SystemState;
+import com.kntronov.makespace.domain.entities.TimeSlot;
+import com.kntronov.makespace.domain.repositories.Mocks;
+import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@DisplayName("BookingService Test")
+class BookingServiceTest {
+
+          /*
+        Setting up this situation
+
+        (X = booked, O = buffer time)
+        -------------------------------------------------------------------------------------------
+        name, capacity / time | 9.00 | 9.15 | 9.30 | 9.45 | 10.00 | 10.15 | 10.30 | 10.45 | 11.00 |
+        -------------------------------------------------------------------------------------------
+        room1 (10)            |  O   |  O   |  O   |   O  |   X   |   X   |   X   |   X   |   X   |
+        -------------------------------------------------------------------------------------------
+        room2 (5)             |  O   |  O   |  O   |   O  |       |       |       |       |       |
+        -------------------------------------------------------------------------------------------
+        room3 (2)             |  O   |  O   |  O   |   O  |       |   X   |   X   |       |       |
+        -------------------------------------------------------------------------------------------
+         */
+
+    private static final LocalDate date = LocalDate.of(2020, 12, 10);
+    private static final Room room1 = new Room("room1", 10);
+    private static final Room room2 = new Room("room2", 5);
+    private static final Room room3 = new Room("room3", 2);
+    private static final List<Room> rooms = List.of(
+            room1, room2, room3
+    );
+    private static final List<Booking> bookings = List.of(
+            new Booking(
+                    room1,
+                    new TimeSlot(
+                            LocalTime.of(10, 0, 0),
+                            LocalTime.of(11, 0, 0)
+                    ),
+                    8
+            ),
+            new Booking(
+                    room3,
+                    new TimeSlot(
+                            LocalTime.of(10, 15, 0),
+                            LocalTime.of(10, 30, 0)
+                    ),
+                    2
+            )
+    );
+    private static final TimeSlot bufferTime = new TimeSlot(
+            LocalTime.of(9, 0, 0),
+            LocalTime.of(9, 45, 0)
+    );
+
+    @Nested
+    @DisplayName("getAvailableRooms")
+    class GetAvailableRoomsTest {
+
+        @Test
+        @DisplayName("""
+                when available rooms are retrieved for a date and valid time slot
+                should return rooms that were not booked
+                """)
+        void getAvailableRoomsTest() {
+            final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
+                @Override
+                public SystemState findByDate(LocalDate date) {
+                    return new SystemState(date, rooms, bookings, bufferTime);
+                }
+            };
+            final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
+            };
+            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+
+            final var expected = List.of(
+                    room2
+            );
+
+            final var targetTimeSlot = new TimeSlot(
+                    LocalTime.of(9, 45),
+                    LocalTime.of(10, 30)
+            );
+            final var result = subject.getAvailableRooms(date, targetTimeSlot);
+            assertThat(result).isEqualTo(expected);
+        }
+
+        @Test
+        @DisplayName("""
+                when available rooms are retrieved for a date and the given timeslot overlaps with buffer time
+                should return empty list
+                """)
+        void getAvailableRoomsBufferTimeOverlapTest() {
+            final var targetTimeSlot = new TimeSlot(
+                    LocalTime.of(9, 30),
+                    LocalTime.of(10, 30)
+            );
+            final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
+                @Override
+                public SystemState findByDate(LocalDate date) {
+                    return new SystemState(date, rooms, bookings, bufferTime);
+                }
+            };
+            final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
+
+            };
+            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+
+            final var result = subject.getAvailableRooms(date, targetTimeSlot);
+            assertThat(result.isEmpty()).isTrue();
+        }
+
+        @Test
+        @DisplayName("""
+                when available rooms are retrieved for a date and a valid timeslot
+                and no rooms are available
+                should return empty list
+                """)
+        void getAvailableRoomsNoAvailabilityTest() {
+            final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
+                @Override
+                public SystemState findByDate(LocalDate date) {
+                    return new SystemState(date, List.of(room1), bookings, bufferTime);
+                }
+            };
+            final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
+            };
+            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+
+            final var expected = List.of(
+                    room2
+            );
+
+            final var targetTimeSlot = new TimeSlot(
+                    LocalTime.of(9, 45),
+                    LocalTime.of(10, 30)
+            );
+            final var result = subject.getAvailableRooms(date, targetTimeSlot);
+            assertThat(result.isEmpty()).isEqualTo(true);
+        }
+    }
+}

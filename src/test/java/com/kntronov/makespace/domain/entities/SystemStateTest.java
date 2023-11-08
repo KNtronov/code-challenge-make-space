@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DisplayName("System Test")
-class SystemTest {
+class SystemStateTest {
 
     private static final LocalDate validDate = LocalDate.of(2020, 12, 10);
     private static final Room room1 = new Room("room1", 10);
@@ -42,7 +42,7 @@ class SystemTest {
     @DisplayName("when date is null should fail validation")
     void nullDateTest() {
         assertThatThrownBy(() -> {
-            new System(null, validRooms, validBookings, validBufferTime);
+            new SystemState(null, validRooms, validBookings, validBufferTime);
         }).hasSameClassAs(nullDateException).hasMessage(nullDateException.getMessage());
     }
 
@@ -50,7 +50,7 @@ class SystemTest {
     @DisplayName("when availableRooms is null should fail validation")
     void nullRoomsTest() {
         assertThatThrownBy(() -> {
-            new System(validDate, null, validBookings, validBufferTime);
+            new SystemState(validDate, null, validBookings, validBufferTime);
         }).hasSameClassAs(nullRoomsException).hasMessage(nullRoomsException.getMessage());
     }
 
@@ -58,7 +58,7 @@ class SystemTest {
     @DisplayName("when currentBookings is null should fail validation")
     void nullBookingsTest() {
         assertThatThrownBy(() -> {
-            new System(validDate, validRooms, null, validBufferTime);
+            new SystemState(validDate, validRooms, null, validBufferTime);
         }).hasSameClassAs(nullBookingsException).hasMessage(nullBookingsException.getMessage());
     }
 
@@ -66,7 +66,7 @@ class SystemTest {
     @DisplayName("when bufferTime is null should fail validation")
     void nullBufferTimeTest() {
         assertThatThrownBy(() -> {
-            new System(validDate, validRooms, validBookings, null);
+            new SystemState(validDate, validRooms, validBookings, null);
         }).hasSameClassAs(nullBufferTimeException).hasMessage(nullBufferTimeException.getMessage());
     }
 }

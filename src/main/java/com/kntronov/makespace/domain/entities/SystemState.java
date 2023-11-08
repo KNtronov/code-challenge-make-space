@@ -14,13 +14,13 @@ import static com.kntronov.makespace.domain.entities.validation.Validations.vali
  * @param currentBookings currently active bookings
  * @param bufferTime      buffer time range wh
  */
-public record System(
+public record SystemState(
         LocalDate date,
         List<Room> availableRooms,
         List<Booking> currentBookings,
         TimeSlot bufferTime
 ) {
-    public System {
+    public SystemState {
         validateNotNull("date", date);
         validateNotNull("availableRooms", availableRooms);
         validateNotNull("currentBookings", currentBookings);

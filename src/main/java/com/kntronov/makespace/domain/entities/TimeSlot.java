@@ -42,4 +42,19 @@ public record TimeSlot(
             throw new IllegalArgumentException("end must be after start");
         }
     }
+
+    /**
+     * Returns true if this timeslot overlaps with the given timeslot
+     * considering timeslot as an exclusive time range i.e.
+     * <p>
+     * 10.30 - 10.45 and 10.45 - 11.00 do not overlap.
+     *
+     * @param target potentially overlapping timeslot
+     * @return if this timeslot overlaps with the given timeslot
+     */
+    public boolean isOverlapping(TimeSlot target) {
+        var x = (this.start.isBefore(target.end));
+        var y = (this.end.isAfter(target.start));
+        return x && y;
+    }
 }
