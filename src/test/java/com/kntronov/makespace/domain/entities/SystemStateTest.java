@@ -29,9 +29,11 @@ class SystemStateTest {
             )
     );
 
-    private static final TimeSlot validBufferTime = new TimeSlot(
-            LocalTime.of(9, 0, 0),
-            LocalTime.of(9, 30, 0)
+    private static final List<TimeSlot> validBufferTimes = List.of(
+            new TimeSlot(
+                    LocalTime.of(9, 0, 0),
+                    LocalTime.of(9, 30, 0)
+            )
     );
 
     private static final Throwable nullDateException = new IllegalArgumentException("date must not be null");
@@ -43,7 +45,7 @@ class SystemStateTest {
     @DisplayName("when date is null should fail validation")
     void nullDateTest() {
         assertThatThrownBy(() -> {
-            new SystemState(null, validRooms, validBookings, validBufferTime);
+            new SystemState(null, validRooms, validBookings, validBufferTimes);
         }).hasSameClassAs(nullDateException).hasMessage(nullDateException.getMessage());
     }
 
@@ -51,7 +53,7 @@ class SystemStateTest {
     @DisplayName("when availableRooms is null should fail validation")
     void nullRoomsTest() {
         assertThatThrownBy(() -> {
-            new SystemState(validDate, null, validBookings, validBufferTime);
+            new SystemState(validDate, null, validBookings, validBufferTimes);
         }).hasSameClassAs(nullRoomsException).hasMessage(nullRoomsException.getMessage());
     }
 
@@ -59,7 +61,7 @@ class SystemStateTest {
     @DisplayName("when currentBookings is null should fail validation")
     void nullBookingsTest() {
         assertThatThrownBy(() -> {
-            new SystemState(validDate, validRooms, null, validBufferTime);
+            new SystemState(validDate, validRooms, null, validBufferTimes);
         }).hasSameClassAs(nullBookingsException).hasMessage(nullBookingsException.getMessage());
     }
 

@@ -12,18 +12,18 @@ import static com.kntronov.makespace.domain.entities.validation.Validations.vali
  * @param date            date of the snapshot
  * @param availableRooms  available rooms in the system
  * @param currentBookings currently active bookings
- * @param bufferTime      buffer time range wh
+ * @param bufferTimes      buffer time ranges
  */
 public record SystemState(
         LocalDate date,
         List<Room> availableRooms,
         List<Booking> currentBookings,
-        TimeSlot bufferTime
+        List<TimeSlot> bufferTimes
 ) {
     public SystemState {
         validateNotNull("date", date);
         validateNotNull("availableRooms", availableRooms);
         validateNotNull("currentBookings", currentBookings);
-        validateNotNull("bufferTime", bufferTime);
+        validateNotNull("bufferTimes", bufferTimes);
     }
 }

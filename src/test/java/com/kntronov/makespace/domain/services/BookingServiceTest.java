@@ -65,9 +65,11 @@ class BookingServiceTest {
                     2
             )
     );
-    private static final TimeSlot bufferTime = new TimeSlot(
-            LocalTime.of(9, 0, 0),
-            LocalTime.of(9, 45, 0)
+    private static final List<TimeSlot> bufferTimes = List.of(
+            new TimeSlot(
+                    LocalTime.of(9, 0, 0),
+                    LocalTime.of(9, 45, 0)
+            )
     );
 
     @Nested
@@ -83,7 +85,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, rooms, bookings, bufferTime);
+                    return new SystemState(date, rooms, bookings, bufferTimes);
                 }
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
@@ -115,7 +117,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, rooms, bookings, bufferTime);
+                    return new SystemState(date, rooms, bookings, bufferTimes);
                 }
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
@@ -137,7 +139,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, List.of(room1), bookings, bufferTime);
+                    return new SystemState(date, List.of(room1), bookings, bufferTimes);
                 }
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
@@ -163,7 +165,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, rooms, bookings, bufferTime);
+                    return new SystemState(date, rooms, bookings, bufferTimes);
                 }
             };
             final var savedBookingCaptor = new Captor<Booking>();
@@ -203,7 +205,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, rooms, bookings, bufferTime);
+                    return new SystemState(date, rooms, bookings, bufferTimes);
                 }
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
@@ -227,7 +229,7 @@ class BookingServiceTest {
             final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
                 @Override
                 public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, List.of(room1), bookings, bufferTime);
+                    return new SystemState(date, List.of(room1), bookings, bufferTimes);
                 }
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {

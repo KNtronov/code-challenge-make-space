@@ -54,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
                 .map(Booking::room)
                 .toList();
         return rooms.stream()
-                .filter(ignored -> !timeSlot.isOverlapping(system.bufferTime()))
+                .filter(ignored -> system.bufferTimes().stream().noneMatch(timeSlot::isOverlapping))
                 .filter(room -> !roomsWithBookingsForTimeSlot.contains(room))
                 .sorted(Comparator.comparing(Room::peopleCapacity))
                 .toList();
