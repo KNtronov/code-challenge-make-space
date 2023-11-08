@@ -21,11 +21,12 @@ public interface BookingService {
      * - Failure with a NoRoomAvailableError will be returned in case no booking for the given inputs
      * is possible.
      *
-     * @param date    date to book meeting on
-     * @param booking booking to be booked
+     * @param date      date to book meeting on
+     * @param timeSlot  time slot be booked
+     * @param numPeople number of people to be booked
      * @return booking result
      */
-    Result<Booking> bookNextAvailableRoom(LocalDate date, Booking booking);
+    Result<Booking> bookNextAvailableRoom(LocalDate date, TimeSlot timeSlot, int numPeople);
 
     /**
      * Retrieve a list of available (not booked) rooms for a given a time slot in a given date.

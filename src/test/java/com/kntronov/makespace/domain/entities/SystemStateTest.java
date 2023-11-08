@@ -19,11 +19,12 @@ class SystemStateTest {
     );
     private static final List<Booking> validBookings = List.of(
             new Booking(
-                    room1,
+                    validDate,
                     new TimeSlot(
                             LocalTime.of(14, 0, 0),
                             LocalTime.of(14, 30, 0)
                     ),
+                    room1,
                     8
             )
     );

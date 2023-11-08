@@ -11,10 +11,16 @@ public class Mocks {
     private Mocks() {
     }
 
+    public static class MethodNotMockedException extends RuntimeException {
+        public MethodNotMockedException() {
+            super("called method was not mocked");
+        }
+    }
+
     public static abstract class SystemStateRepositoryMock implements SystemStateRepository {
         @Override
         public SystemState findByDate(LocalDate date) {
-            return null;
+            throw new MethodNotMockedException();
         }
     }
 
@@ -22,11 +28,12 @@ public class Mocks {
 
         @Override
         public List<Booking> findByDate(LocalDate date) {
-            return null;
+            throw new MethodNotMockedException();
         }
 
         @Override
-        public void save(Booking booking) {
+        public Booking save(Booking booking) {
+            throw new MethodNotMockedException();
         }
     }
 

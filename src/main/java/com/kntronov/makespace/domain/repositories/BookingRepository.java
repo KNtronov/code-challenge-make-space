@@ -8,5 +8,5 @@ import java.util.List;
 public interface BookingRepository {
     List<Booking> findByDate(LocalDate date);
 
-    void save(Booking booking);
+    Booking save(Booking booking);
 }

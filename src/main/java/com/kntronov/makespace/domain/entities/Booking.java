@@ -15,14 +15,16 @@ import static com.kntronov.makespace.domain.entities.validation.Validations.vali
  * @param numPeople number of people booked for
  */
 public record Booking(
-        Room room,
+        LocalDate date,
         TimeSlot timeSlot,
+        Room room,
         int numPeople
 ) {
 
     public Booking {
-        validateNotNull("room", room);
+        validateNotNull("date", date);
         validateNotNull("timeSlot", timeSlot);
+        validateNotNull("room", room);
         validateGreaterThanZero("numPeople", numPeople);
         validateCapacity(numPeople, room);
     }

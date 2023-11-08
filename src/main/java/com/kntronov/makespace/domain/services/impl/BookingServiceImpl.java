@@ -3,6 +3,7 @@ package com.kntronov.makespace.domain.services.impl;
 import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
+import com.kntronov.makespace.domain.errors.NoRoomAvailableError;
 import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.domain.services.BookingService;
@@ -23,8 +24,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Result<Booking> bookNextAvailableRoom(LocalDate date, Booking booking) {
-        return null;
+    public Result<Booking> bookNextAvailableRoom(LocalDate date, TimeSlot timeSlot, int numPeople) {
+        final var maybeAvailableRoom = getAvailableRooms(date, timeSlot)
+                .stream()
+                .filter(room -> room.peopleCapacity() >= numPeople)
+                .min(Comparator.comparing(Room::peopleCapacity));
+        if (maybeAvailableRoom.isPresent()) {
+            final var room = maybeAvailableRoom.get();
+            final var booking = new Booking(
+                    date,
+                    timeSlot,
+                    room,
+                    numPeople
+            );
+            final var savedBooking = bookingRepository.save(booking);
+            return new Result.Success<>(savedBooking);
+        } else {
+            return new Result.Failure<>(new NoRoomAvailableError());
+        }
     }
 
     @Override
