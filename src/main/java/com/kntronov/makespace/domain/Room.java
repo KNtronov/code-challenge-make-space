@@ -2,6 +2,12 @@ package com.kntronov.makespace.domain;
 
 import static com.kntronov.makespace.domain.validation.Validations.*;
 
+/**
+ * Room is a bookable space with a finite capacity of people
+ *
+ * @param name           verbose room name
+ * @param peopleCapacity maximum number of people the room is able to contain
+ */
 public record Room(
         String name,
         int peopleCapacity

@@ -10,9 +10,9 @@ import static com.kntronov.makespace.domain.validation.Validations.validateNotNu
 /**
  * Booking represents a booked timeslot of a room for a certain number of people
  *
- * @param room
- * @param timeSlot
- * @param numPeople
+ * @param room      booked room
+ * @param timeSlot  booked time slot
+ * @param numPeople number of people booked for
  */
 public record Booking(
         Room room,
@@ -34,11 +34,11 @@ public record Booking(
     }
 
     /**
-     * TimeSlot is a range of time measured in 15 minute increments.
+     * TimeSlot is a range of time measured in 15 minute increments [0, 15, 30, 45].
      *
-     * @param date  date
-     * @param start time slot start time
-     * @param end   time slot end time
+     * @param date  time slot date
+     * @param start time slot start time in 15 minute increments [0, 15, 30, 45]
+     * @param end   time slot end time in 15 minute increments [0, 15, 30, 45]
      */
     public record TimeSlot(
             LocalDate date,
