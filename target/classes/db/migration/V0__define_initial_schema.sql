@@ -15,3 +15,10 @@ create table booking
     PRIMARY KEY (date, start, "end"),
     FOREIGN KEY (room_name) REFERENCES room (name)
 );
+
+create table buffer_time
+(
+    start TIME,
+    "end" TIME,
+    PRIMARY KEY (start, "end")
+)
