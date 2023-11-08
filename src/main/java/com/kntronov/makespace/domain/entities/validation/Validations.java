@@ -1,4 +1,4 @@
-package com.kntronov.makespace.domain.validation;
+package com.kntronov.makespace.domain.entities.validation;
 
 public class Validations {
 

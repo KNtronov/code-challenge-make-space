@@ -1,4 +1,4 @@
-package com.kntronov.makespace.domain;
+package com.kntronov.makespace.domain.entities;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

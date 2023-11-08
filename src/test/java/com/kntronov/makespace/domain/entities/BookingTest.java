@@ -1,4 +1,4 @@
-package com.kntronov.makespace.domain;
+package com.kntronov.makespace.domain.entities;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Stream;
 
@@ -17,8 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class BookingTest {
 
     private static final Room validRoom = new Room("valid room", 10);
-    private static final Booking.TimeSlot validTimeSlot = new Booking.TimeSlot(
-            LocalDate.of(2020, 10, 20),
+    private static final TimeSlot validTimeSlot = new TimeSlot(
             LocalTime.of(15, 15, 0, 0),
             LocalTime.of(15, 30, 0, 0)
     );
@@ -73,10 +71,8 @@ class BookingTest {
     @DisplayName("TimeSlot Test")
     class TimeSlotTest {
 
-        private static final LocalDate validDate = LocalDate.of(2020, 12, 10);
         private static final LocalTime validStart = LocalTime.of(14, 30, 0);
         private static final LocalTime validEnd = LocalTime.of(14, 45, 0);
-        private static final Throwable nullDateException = new IllegalArgumentException("date must not be null");
         private static final Throwable nullStartException = new IllegalArgumentException("start must not be null");
         private static final Throwable nullEndException = new IllegalArgumentException("end must not be null");
         private static final Throwable invalidTimeSlotException = new IllegalArgumentException("slot minutes must be one of [0, 15, 30, 45]");
@@ -96,18 +92,10 @@ class BookingTest {
         }
 
         @Test
-        @DisplayName("when date is null should fail validation")
-        void nullDateTest() {
-            assertThatThrownBy(() -> {
-                new Booking.TimeSlot(null, validStart, validEnd);
-            }).hasSameClassAs(nullDateException).hasMessage(nullDateException.getMessage());
-        }
-
-        @Test
         @DisplayName("when start is null should fail validation")
         void nullStartTest() {
             assertThatThrownBy(() -> {
-                new Booking.TimeSlot(validDate, null, validEnd);
+                new TimeSlot(null, validEnd);
             }).hasSameClassAs(nullStartException).hasMessage(nullStartException.getMessage());
         }
 
@@ -115,7 +103,7 @@ class BookingTest {
         @DisplayName("when end is null should fail validation")
         void nullEndTest() {
             assertThatThrownBy(() -> {
-                new Booking.TimeSlot(validDate, validStart, null);
+                new TimeSlot(validStart, null);
             }).hasSameClassAs(nullEndException).hasMessage(nullEndException.getMessage());
         }
 
@@ -125,7 +113,7 @@ class BookingTest {
         void invalidStartTimeTest(int invalidMinutes) {
             final var invalidStart = LocalTime.of(12, invalidMinutes, 0);
             assertThatThrownBy(() -> {
-                new Booking.TimeSlot(validDate, invalidStart, validEnd);
+                new TimeSlot(invalidStart, validEnd);
             }).hasSameClassAs(invalidTimeSlotException).hasMessage(invalidTimeSlotException.getMessage());
         }
 
@@ -135,7 +123,7 @@ class BookingTest {
         void invalidEndTimeTest(int invalidMinutes) {
             final var invalidEnd = LocalTime.of(12, invalidMinutes, 0);
             assertThatThrownBy(() -> {
-                new Booking.TimeSlot(validDate, validStart, invalidEnd);
+                new TimeSlot(validStart, invalidEnd);
             }).hasSameClassAs(invalidTimeSlotException).hasMessage(invalidTimeSlotException.getMessage());
         }
 
@@ -143,7 +131,7 @@ class BookingTest {
         @DisplayName("when start and end are an invalid range should fail validation")
         void invalidRangeTest() {
             assertThatThrownBy(() -> {
-                new Booking.TimeSlot(validDate, validEnd, validStart);
+                new TimeSlot(validEnd, validStart);
             }).hasSameClassAs(invalidRangeException).hasMessage(invalidRangeException.getMessage());
         }
     }

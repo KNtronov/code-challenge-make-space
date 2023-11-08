@@ -1,6 +1,6 @@
-package com.kntronov.makespace.domain;
+package com.kntronov.makespace.domain.entities;
 
-import static com.kntronov.makespace.domain.validation.Validations.*;
+import static com.kntronov.makespace.domain.entities.validation.Validations.*;
 
 /**
  * Room is a bookable space with a finite capacity of people
