@@ -1,11 +1,8 @@
 package com.kntronov.makespace;
 
 import com.kntronov.makespace.infrastructure.db.PooledDataSource;
-import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
 import com.zaxxer.hikari.HikariConfig;
 import org.flywaydb.core.Flyway;
-
-import java.time.LocalDate;
 
 public class App {
     public static void main(String[] args) {

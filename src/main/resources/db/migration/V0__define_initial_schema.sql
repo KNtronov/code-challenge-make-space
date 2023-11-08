@@ -12,7 +12,7 @@ create table booking
     "end"      TIME,
     room_name  VARCHAR NOT NULL,
     num_people INTEGER NOT NULL,
-    PRIMARY KEY (date, start, "end"),
+    PRIMARY KEY (date, start, "end", room_name),
     FOREIGN KEY (room_name) REFERENCES room (name)
 );
 
