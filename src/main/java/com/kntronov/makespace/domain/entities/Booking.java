@@ -1,8 +1,7 @@
 package com.kntronov.makespace.domain.entities;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
+import java.util.UUID;
 
 import static com.kntronov.makespace.domain.entities.validation.Validations.validateGreaterThanZero;
 import static com.kntronov.makespace.domain.entities.validation.Validations.validateNotNull;
@@ -15,6 +14,7 @@ import static com.kntronov.makespace.domain.entities.validation.Validations.vali
  * @param numPeople number of people booked for
  */
 public record Booking(
+        UUID id,
         LocalDate date,
         TimeSlot timeSlot,
         Room room,
@@ -22,6 +22,7 @@ public record Booking(
 ) {
 
     public Booking {
+        validateNotNull("id", id);
         validateNotNull("date", date);
         validateNotNull("timeSlot", timeSlot);
         validateNotNull("room", room);

@@ -7,6 +7,7 @@ import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.domain.services.BookingService;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
+import com.kntronov.makespace.domain.services.impl.UUIDProviderImpl;
 import com.kntronov.makespace.infrastructure.db.PooledDataSource;
 import com.kntronov.makespace.infrastructure.repositories.BookingRepositoryImpl;
 import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
@@ -22,6 +23,7 @@ public class AppContext {
     private final BookingRepository bookingRepository;
     private final SystemStateRepository systemStateRepository;
 
+    private final UUIDProviderImpl uuidProvider;
     private final BookingService bookingService;
 
     private final BookingsController bookingsController;
@@ -30,10 +32,12 @@ public class AppContext {
     public AppContext(AppConfig config) {
         this.dataSource = setUpDatabaseDataSource(config.dbConfig());
 
-        this.bookingRepository = new BookingRepositoryImpl(dataSource);
-        this.systemStateRepository = new SystemStateRepositoryImpl(dataSource);
+        this.uuidProvider = new UUIDProviderImpl();
 
-        this.bookingService = new BookingServiceImpl(systemStateRepository, bookingRepository);
+        this.bookingRepository = new BookingRepositoryImpl(dataSource);
+        this.systemStateRepository = new SystemStateRepositoryImpl(dataSource, bookingRepository);
+
+        this.bookingService = new BookingServiceImpl(uuidProvider, systemStateRepository, bookingRepository);
 
         this.bookingsController = new BookingsController(bookingService);
         this.roomsController = new RoomsController(bookingService);

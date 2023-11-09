@@ -8,6 +8,7 @@ import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.infrastructure.repositories.BookingRepositoryImpl;
 import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
 import com.kntronov.makespace.testing.IntegrationTest;
+import com.kntronov.makespace.testing.Mocks;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.kntronov.makespace.testing.ResultTesting.expectFailure;
 import static com.kntronov.makespace.testing.ResultTesting.expectSuccess;
@@ -25,6 +27,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Tag("integration")
 class BookingServiceIntegrationTest extends IntegrationTest {
 
+    private static final UUID bookingId1 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc1111");
+    private static final UUID bookingId2 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc2222");
+    private static final UUID bookingId3 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc3333");
+    private static final UUID newBookingId = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc0000");
     private static final LocalDate date = LocalDate.of(2020, 12, 10);
     private static final Room room1 = new Room("C-Cave", 3);
     private static final Room room2 = new Room("D-Tower", 7);
@@ -32,6 +38,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
 
     private static final List<Booking> bookings = List.of(
             new Booking(
+                    bookingId1,
                     date,
                     new TimeSlot(
                             LocalTime.of(10, 0, 0),
@@ -41,6 +48,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
                     3
             ),
             new Booking(
+                    bookingId2,
                     date,
                     new TimeSlot(
                             LocalTime.of(10, 15, 0),
@@ -61,10 +69,11 @@ class BookingServiceIntegrationTest extends IntegrationTest {
                 should return rooms that were not booked
                 """)
         void getAvailableRoomsTest() {
-            final var systemRepository = new SystemStateRepositoryImpl(getDataSource());
             final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
             bookings.forEach(bookingRepository::save);
-            final var subject = new BookingServiceImpl(systemRepository, bookingRepository);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
 
             final var expected = List.of(
                     room2
@@ -84,14 +93,15 @@ class BookingServiceIntegrationTest extends IntegrationTest {
                 should return empty list
                 """)
         void getAvailableRoomsBufferTimeOverlapTest() {
-            final var systemRepository = new SystemStateRepositoryImpl(getDataSource());
             final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
             bookings.forEach(bookingRepository::save);
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 0),
                     LocalTime.of(9, 15)
             );
-            final var subject = new BookingServiceImpl(systemRepository, bookingRepository);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
 
             final var result = subject.getAvailableRooms(date, targetTimeSlot);
             assertThat(result.isEmpty()).isTrue();
@@ -105,17 +115,19 @@ class BookingServiceIntegrationTest extends IntegrationTest {
         @Test
         @DisplayName("when booking slot is found, should create a new booking for most optimal slot and return success")
         void bookNextAvailableRoomSuccessTest() {
-            final var systemRepository = new SystemStateRepositoryImpl(getDataSource());
             final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
             bookings.forEach(bookingRepository::save);
 
-            final var subject = new BookingServiceImpl(systemRepository, bookingRepository);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),
                     LocalTime.of(10, 15)
             );
             final var expected = new Booking(
+                    newBookingId,
                     date,
                     targetTimeSlot,
                     room2,
@@ -132,11 +144,12 @@ class BookingServiceIntegrationTest extends IntegrationTest {
         @Test
         @DisplayName("when booking slot is not found due to insufficient capacity should return failure with NoRoomAvailableError")
         void bookNextAvailableRoomCapacityFailureTest() {
-            final var systemRepository = new SystemStateRepositoryImpl(getDataSource());
             final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
             bookings.forEach(bookingRepository::save);
 
-            final var subject = new BookingServiceImpl(systemRepository, bookingRepository);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),
@@ -151,10 +164,12 @@ class BookingServiceIntegrationTest extends IntegrationTest {
         @Test
         @DisplayName("when booking slot is not found due to all rooms being booked should return failure with NoRoomAvailableError")
         void bookNextAvailableRoomBookedFailureTest() {
-            final var systemRepository = new SystemStateRepositoryImpl(getDataSource());
             final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
             final var bookings = List.of(
                     new Booking(
+                            bookingId1,
                             date,
                             new TimeSlot(
                                     LocalTime.of(10, 0, 0),
@@ -164,6 +179,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
                             3
                     ),
                     new Booking(
+                            bookingId2,
                             date,
                             new TimeSlot(
                                     LocalTime.of(10, 0, 0),
@@ -173,6 +189,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
                             3
                     ),
                     new Booking(
+                            bookingId3,
                             date,
                             new TimeSlot(
                                     LocalTime.of(10, 0, 0),
@@ -184,7 +201,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
             );
             bookings.forEach(bookingRepository::save);
 
-            final var subject = new BookingServiceImpl(systemRepository, bookingRepository);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),

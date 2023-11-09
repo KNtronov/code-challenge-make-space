@@ -7,6 +7,7 @@ import com.kntronov.makespace.util.Result;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service responsible for retrieving and performing bookings.
@@ -37,4 +38,12 @@ public interface BookingService {
      * @return available rooms ordered in ascending order by capacity
      */
     List<Room> getAvailableRooms(LocalDate date, TimeSlot timeSlot);
+
+    List<Booking> getAllBookingsByDate(LocalDate date);
+
+    Booking updateBooking(Booking booking);
+
+    Booking deleteBooking(UUID id);
+
+    Booking getBooking(UUID id);
 }

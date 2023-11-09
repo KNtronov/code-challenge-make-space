@@ -5,9 +5,9 @@ import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.SystemState;
 import com.kntronov.makespace.domain.entities.TimeSlot;
 import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
-import com.kntronov.makespace.domain.repositories.Mocks;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.testing.Captor;
+import com.kntronov.makespace.testing.Mocks;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static com.kntronov.makespace.testing.ResultTesting.expectFailure;
 import static com.kntronov.makespace.testing.ResultTesting.expectSuccess;
@@ -38,6 +39,10 @@ class BookingServiceTest {
         -------------------------------------------------------------------------------------------
          */
 
+    private static final UUID bookingId1 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc1111");
+    private static final UUID bookingId2 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc2222");
+    private static final UUID bookingId3 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc3333");
+    private static final UUID newBookingId = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc0000");
     private static final LocalDate date = LocalDate.of(2020, 12, 10);
     private static final Room room1 = new Room("room1", 10);
     private static final Room room2 = new Room("room2", 5);
@@ -47,6 +52,7 @@ class BookingServiceTest {
     );
     private static final List<Booking> bookings = List.of(
             new Booking(
+                    bookingId1,
                     date,
                     new TimeSlot(
                             LocalTime.of(10, 0, 0),
@@ -56,6 +62,7 @@ class BookingServiceTest {
                     8
             ),
             new Booking(
+                    bookingId2,
                     date,
                     new TimeSlot(
                             LocalTime.of(10, 15, 0),
@@ -90,7 +97,8 @@ class BookingServiceTest {
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
             };
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
             final var expected = List.of(
                     room2
@@ -123,7 +131,8 @@ class BookingServiceTest {
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
 
             };
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
             final var result = subject.getAvailableRooms(date, targetTimeSlot);
             assertThat(result.isEmpty()).isTrue();
@@ -144,7 +153,8 @@ class BookingServiceTest {
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
             };
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),
@@ -177,7 +187,8 @@ class BookingServiceTest {
                 }
             };
 
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
 
             final var targetTimeSlot = new TimeSlot(
@@ -185,6 +196,7 @@ class BookingServiceTest {
                     LocalTime.of(10, 15)
             );
             final var expected = new Booking(
+                    newBookingId,
                     date,
                     targetTimeSlot,
                     room3,
@@ -210,8 +222,9 @@ class BookingServiceTest {
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
             };
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
 
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),
@@ -234,8 +247,9 @@ class BookingServiceTest {
             };
             final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
             };
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
 
-            final var subject = new BookingServiceImpl(systemRepositoryMock, bookingRepositoryMock);
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),

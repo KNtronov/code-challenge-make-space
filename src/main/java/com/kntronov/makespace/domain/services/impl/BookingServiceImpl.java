@@ -7,6 +7,7 @@ import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
 import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.domain.services.BookingService;
+import com.kntronov.makespace.domain.services.UUIDProvider;
 import com.kntronov.makespace.util.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +15,19 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 public class BookingServiceImpl implements BookingService {
 
     private static final Logger logger = LoggerFactory.getLogger("BookingService");
 
+    private final UUIDProvider uuidProvider;
+
     private final SystemStateRepository systemStateRepository;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(SystemStateRepository systemStateRepository, BookingRepository bookingRepository) {
+    public BookingServiceImpl(UUIDProvider uuidProvider, SystemStateRepository systemStateRepository, BookingRepository bookingRepository) {
+        this.uuidProvider = uuidProvider;
         this.systemStateRepository = systemStateRepository;
         this.bookingRepository = bookingRepository;
     }
@@ -38,6 +43,7 @@ public class BookingServiceImpl implements BookingService {
             final var room = maybeAvailableRoom.get();
             logger.info("found available room {}", maybeAvailableRoom.get());
             final var booking = new Booking(
+                    uuidProvider.generateUuid(),
                     date,
                     timeSlot,
                     room,
@@ -70,5 +76,25 @@ public class BookingServiceImpl implements BookingService {
                 .toList();
         logger.info("available rooms: {}", result);
         return result;
+    }
+
+    @Override
+    public List<Booking> getAllBookingsByDate(LocalDate date) {
+        return bookingRepository.findByDate(date);
+    }
+
+    @Override
+    public Booking updateBooking(Booking booking) {
+        return bookingRepository.update(booking);
+    }
+
+    @Override
+    public Booking deleteBooking(UUID id) {
+        return bookingRepository.delete(id);
+    }
+
+    @Override
+    public Booking getBooking(UUID id) {
+        return bookingRepository.find(id);
     }
 }

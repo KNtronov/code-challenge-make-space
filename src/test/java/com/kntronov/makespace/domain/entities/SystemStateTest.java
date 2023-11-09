@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DisplayName("System Test")
 class SystemStateTest {
 
+    private static final UUID validId = UUID.randomUUID();
     private static final LocalDate validDate = LocalDate.of(2020, 12, 10);
     private static final Room room1 = new Room("room1", 10);
     private static final List<Room> validRooms = List.of(
@@ -19,6 +21,7 @@ class SystemStateTest {
     );
     private static final List<Booking> validBookings = List.of(
             new Booking(
+                    validId,
                     validDate,
                     new TimeSlot(
                             LocalTime.of(14, 0, 0),
@@ -39,7 +42,7 @@ class SystemStateTest {
     private static final Throwable nullDateException = new IllegalArgumentException("date must not be null");
     private static final Throwable nullRoomsException = new IllegalArgumentException("availableRooms must not be null");
     private static final Throwable nullBookingsException = new IllegalArgumentException("currentBookings must not be null");
-    private static final Throwable nullBufferTimeException = new IllegalArgumentException("bufferTime must not be null");
+    private static final Throwable nullBufferTimeException = new IllegalArgumentException("bufferTimes must not be null");
 
     @Test
     @DisplayName("when date is null should fail validation")

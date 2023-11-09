@@ -1,14 +1,13 @@
 package com.kntronov.makespace.infrastructure.repositories;
 
-import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.SystemState;
 import com.kntronov.makespace.domain.entities.TimeSlot;
+import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.infrastructure.db.PooledDataSource;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,15 +17,18 @@ public class SystemStateRepositoryImpl implements SystemStateRepository {
 
     private final PooledDataSource dataSource;
 
-    public SystemStateRepositoryImpl(PooledDataSource dataSource) {
+    private final BookingRepository bookingRepository;
+
+    public SystemStateRepositoryImpl(PooledDataSource dataSource, BookingRepository bookingRepository) {
         this.dataSource = dataSource;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
     public SystemState findByDate(LocalDate date) {
         return dataSource.getLeanConnection().use(c -> {
             final var rooms = findAllRooms(c);
-            final var bookings = findBookingsByDate(c, date);
+            final var bookings = bookingRepository.findByDate(date);
             final var bufferTimes = findAllBufferTimes(c);
             return new SystemState(
                     date,
@@ -51,42 +53,6 @@ public class SystemStateRepositoryImpl implements SystemStateRepository {
                 rooms.add(room);
             }
             return rooms;
-        }
-    }
-
-    private List<Booking> findBookingsByDate(Connection c, LocalDate date) throws SQLException {
-        final var sql = """
-                SELECT b.date, b.start, b."end", b.room_name, b.num_people, r.people_capacity
-                FROM booking b, room r
-                WHERE b.room_name = r.name
-                AND b.date = ?
-                """;
-        try (final var statement = c.prepareStatement(sql)) {
-            statement.setDate(1, Date.valueOf(date));
-            final var result = statement.executeQuery();
-            final var bookings = new ArrayList<Booking>();
-            while (result.next()) {
-                final var resultDate = result.getDate("date").toLocalDate();
-                final var start = result.getTime("start").toLocalTime();
-                final var end = result.getTime("end").toLocalTime();
-                final var roomName = result.getString("room_name");
-                final var roomCapacity = result.getInt("people_capacity");
-                final var numPeople = result.getInt("num_people");
-                final var booking = new Booking(
-                        resultDate,
-                        new TimeSlot(
-                                start,
-                                end
-                        ),
-                        new Room(
-                                roomName,
-                                roomCapacity
-                        ),
-                        numPeople
-                );
-                bookings.add(booking);
-            }
-            return bookings;
         }
     }
 
