@@ -8,6 +8,7 @@ import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.testing.Captor;
 import com.kntronov.makespace.testing.Mocks;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,6 @@ class BookingServiceTest {
 
     private static final UUID bookingId1 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc1111");
     private static final UUID bookingId2 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc2222");
-    private static final UUID bookingId3 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc3333");
     private static final UUID newBookingId = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc0000");
     private static final LocalDate date = LocalDate.of(2020, 12, 10);
     private static final Room room1 = new Room("room1", 10);
@@ -78,6 +78,21 @@ class BookingServiceTest {
                     LocalTime.of(9, 45, 0)
             )
     );
+
+    @NotNull
+    private static BookingServiceImpl createDefaultSubject() {
+        final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
+            @Override
+            public SystemState findByDate(LocalDate date) {
+                return new SystemState(date, rooms, bookings, bufferTimes);
+            }
+        };
+        final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
+        };
+        final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+
+        return new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
+    }
 
     @Nested
     @DisplayName("getAvailableRooms")
@@ -214,17 +229,7 @@ class BookingServiceTest {
         @Test
         @DisplayName("when booking slot is not found due to insufficient capacity should return failure with NoRoomAvailableError")
         void bookNextAvailableRoomCapacityFailureTest() {
-            final var systemRepositoryMock = new Mocks.SystemStateRepositoryMock() {
-                @Override
-                public SystemState findByDate(LocalDate date) {
-                    return new SystemState(date, rooms, bookings, bufferTimes);
-                }
-            };
-            final var bookingRepositoryMock = new Mocks.BookingRepositoryMock() {
-            };
-            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
-
-            final var subject = new BookingServiceImpl(uuidProvider, systemRepositoryMock, bookingRepositoryMock);
+            final var subject = createDefaultSubject();
 
             final var targetTimeSlot = new TimeSlot(
                     LocalTime.of(9, 45),

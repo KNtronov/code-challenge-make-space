@@ -8,6 +8,7 @@ import com.kntronov.makespace.domain.services.UUIDProvider;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Mocks {
@@ -30,7 +31,7 @@ public class Mocks {
 
     public static abstract class BookingRepositoryMock implements BookingRepository {
         @Override
-        public Booking find(UUID id) {
+        public Optional<Booking> find(UUID id) {
             throw new MethodNotMockedException();
         }
 
@@ -40,17 +41,12 @@ public class Mocks {
         }
 
         @Override
-        public Booking delete(UUID id) {
+        public int delete(UUID id) {
             throw new MethodNotMockedException();
         }
 
         @Override
         public Booking save(Booking booking) {
-            throw new MethodNotMockedException();
-        }
-
-        @Override
-        public Booking update(Booking booking) {
             throw new MethodNotMockedException();
         }
     }

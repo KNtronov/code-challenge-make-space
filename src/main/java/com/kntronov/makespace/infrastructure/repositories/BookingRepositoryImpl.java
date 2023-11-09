@@ -10,6 +10,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class BookingRepositoryImpl implements BookingRepository {
@@ -21,7 +22,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public Booking find(UUID id) {
+    public Optional<Booking> find(UUID id) {
         final var sql = """                    
                 SELECT b.id, b.date, b.start, b."end", b.room_name, b.num_people, r.people_capacity
                 FROM booking b, room r
@@ -32,7 +33,11 @@ public class BookingRepositoryImpl implements BookingRepository {
             try (final var statement = c.prepareStatement(sql)) {
                 statement.setObject(1, id);
                 final var result = statement.executeQuery();
-                return BookingMapper.fromResult(result);
+                if (result.next()) {
+                    return Optional.of(BookingMapper.fromResult(result));
+                } else {
+                    return Optional.empty();
+                }
             }
         });
     }
@@ -60,19 +65,19 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public Booking delete(UUID id) {
+    public int delete(UUID id) {
         final var sql = """                    
                 DELETE
                 FROM booking b
                 WHERE b.id = ?
                 """;
-        return dataSource.getLeanConnection().transact(c -> {
+        dataSource.getLeanConnection().transact(c -> {
             try (final var statement = c.prepareStatement(sql)) {
                 statement.setObject(1, id);
-                final var result = statement.executeQuery();
-                return BookingMapper.fromResult(result);
+                return statement.executeUpdate();
             }
         });
+        return 0;
     }
 
     @Override
@@ -93,29 +98,4 @@ public class BookingRepositoryImpl implements BookingRepository {
             return booking;
         });
     }
-
-    @Override
-    public Booking update(Booking booking) {
-        final var sql = """
-                UPDATE booking
-                SET date = ?,
-                start = ?,
-                "end" = ?,
-                room_name = ?,
-                num_people = ?
-                WHERE id = ?
-                """;
-        return dataSource.getLeanConnection().transact(c -> {
-            final var statement = c.prepareStatement(sql);
-            statement.setDate(1, Date.valueOf(booking.date()));
-            statement.setTime(2, Time.valueOf(booking.timeSlot().start()));
-            statement.setTime(3, Time.valueOf(booking.timeSlot().end()));
-            statement.setString(4, booking.room().name());
-            statement.setInt(5, booking.numPeople());
-            statement.setObject(6, booking.id().toString());
-            statement.executeUpdate();
-            return booking;
-        });
-    }
-
 }

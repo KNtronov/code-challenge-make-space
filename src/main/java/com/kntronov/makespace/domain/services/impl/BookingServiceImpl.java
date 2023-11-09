@@ -4,10 +4,12 @@ import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
 import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
+import com.kntronov.makespace.domain.errors.RoomNotFoundException;
 import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.domain.services.BookingService;
 import com.kntronov.makespace.domain.services.UUIDProvider;
+import com.kntronov.makespace.util.Nothing;
 import com.kntronov.makespace.util.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,17 +86,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking updateBooking(Booking booking) {
-        return bookingRepository.update(booking);
+    public Result<Nothing> deleteBooking(UUID id) {
+        return switch (getBooking(id)) {
+            case Result.Success<Booking> ignored -> {
+                bookingRepository.delete(id);
+                yield Result.pure(new Nothing());
+            }
+            case Result.Failure<Booking> failure -> Result.fail(failure.error());
+        };
     }
 
     @Override
-    public Booking deleteBooking(UUID id) {
-        return bookingRepository.delete(id);
-    }
-
-    @Override
-    public Booking getBooking(UUID id) {
-        return bookingRepository.find(id);
+    public Result<Booking> getBooking(UUID id) {
+        return bookingRepository.find(id)
+                .map(Result::pure)
+                .orElse(Result.fail(new RoomNotFoundException()));
     }
 }

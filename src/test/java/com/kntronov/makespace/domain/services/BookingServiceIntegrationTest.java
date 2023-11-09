@@ -4,6 +4,7 @@ import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
 import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
+import com.kntronov.makespace.domain.errors.RoomNotFoundException;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.infrastructure.repositories.BookingRepositoryImpl;
 import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
@@ -36,27 +37,29 @@ class BookingServiceIntegrationTest extends IntegrationTest {
     private static final Room room2 = new Room("D-Tower", 7);
     private static final Room room3 = new Room("G-Mansion", 20);
 
-    private static final List<Booking> bookings = List.of(
-            new Booking(
-                    bookingId1,
-                    date,
-                    new TimeSlot(
-                            LocalTime.of(10, 0, 0),
-                            LocalTime.of(11, 0, 0)
-                    ),
-                    room1,
-                    3
+    private static final Booking booking1 = new Booking(
+            bookingId1,
+            date,
+            new TimeSlot(
+                    LocalTime.of(10, 0, 0),
+                    LocalTime.of(11, 0, 0)
             ),
-            new Booking(
-                    bookingId2,
-                    date,
-                    new TimeSlot(
-                            LocalTime.of(10, 15, 0),
-                            LocalTime.of(10, 30, 0)
-                    ),
-                    room3,
-                    18
-            )
+            room1,
+            3
+    );
+    private static final Booking booking2 = new Booking(
+            bookingId2,
+            date,
+            new TimeSlot(
+                    LocalTime.of(10, 15, 0),
+                    LocalTime.of(10, 30, 0)
+            ),
+            room3,
+            18
+    );
+    private static final List<Booking> bookings = List.of(
+            booking1,
+            booking2
     );
 
     @Nested
@@ -213,4 +216,110 @@ class BookingServiceIntegrationTest extends IntegrationTest {
             );
         }
     }
+
+    @Nested
+    @DisplayName("getAllBookingsByDate")
+    class GetAllBookingsByDateTest {
+
+        @Test
+        @DisplayName("when retrieving bookings for a date should return bookings")
+        void getAllBookingsByDateTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            bookings.forEach(bookingRepository::save);
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var result = subject.getAllBookingsByDate(date);
+            assertThat(result).isEqualTo(bookings);
+        }
+
+        @Test
+        @DisplayName("when retrieving bookings for a date that has no bookings should return empty list")
+        void getAllBookingsByDateNotFoundTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var result = subject.getAllBookingsByDate(date);
+            assertThat(result.isEmpty()).isTrue();
+        }
+
+    }
+
+    @Nested
+    @DisplayName("deleteBooking")
+    class DeleteBookingTest {
+
+        @Test
+        @DisplayName("when booking is deleted should delete booking")
+        void deleteBookingTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            bookings.forEach(bookingRepository::save);
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var deletionResult = subject.deleteBooking(bookingId1);
+            expectSuccess(deletionResult, ignored -> {
+                final var result = subject.getAllBookingsByDate(date);
+                assertThat(result).isEqualTo(List.of(booking2));
+            });
+        }
+
+        @Test
+        @DisplayName("when booking that does not exist is deleted should fail")
+        void deleteBookingNotFoundTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var result = subject.deleteBooking(bookingId1);
+            expectFailure(result, r ->
+                    assertThat(r).hasSameClassAs(new RoomNotFoundException())
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("getBooking")
+    class getBooking {
+        @Test
+        @DisplayName("when booking is retrieved should retrieve booking")
+        void getBookingTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+            bookings.forEach(bookingRepository::save);
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var result = subject.getBooking(bookingId1);
+            expectSuccess(result, r -> {
+                assertThat(r).isEqualTo(booking1);
+            });
+        }
+
+        @Test
+        @DisplayName("when booking that does not exist is retrieved should fail")
+        void getBookingNotFoundTest() {
+            final var bookingRepository = new BookingRepositoryImpl(getDataSource());
+            final var systemRepository = new SystemStateRepositoryImpl(getDataSource(), bookingRepository);
+            final var uuidProvider = new Mocks.UUIDProviderMock(List.of(newBookingId));
+
+            final var subject = new BookingServiceImpl(uuidProvider, systemRepository, bookingRepository);
+
+            final var result = subject.getBooking(bookingId1);
+            expectFailure(result, r ->
+                    assertThat(r).hasSameClassAs(new RoomNotFoundException())
+            );
+        }
+    }
+
 }

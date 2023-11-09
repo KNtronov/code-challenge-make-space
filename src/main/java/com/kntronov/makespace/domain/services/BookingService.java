@@ -3,6 +3,7 @@ package com.kntronov.makespace.domain.services;
 import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
+import com.kntronov.makespace.util.Nothing;
 import com.kntronov.makespace.util.Result;
 
 import java.time.LocalDate;
@@ -41,9 +42,7 @@ public interface BookingService {
 
     List<Booking> getAllBookingsByDate(LocalDate date);
 
-    Booking updateBooking(Booking booking);
+    Result<Nothing> deleteBooking(UUID id);
 
-    Booking deleteBooking(UUID id);
-
-    Booking getBooking(UUID id);
+    Result<Booking> getBooking(UUID id);
 }
