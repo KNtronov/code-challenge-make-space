@@ -37,8 +37,8 @@ public class App {
                 .routes(() -> Routes.configureRoutes(context))
                 .exception(Exception.class, Routes::configureExceptionHandling)
                 .after(ctx -> applicationLogger.info(
-                        "[response] {} {} {}",
-                        ctx.path(), ctx.queryString(), ctx.body()
+                        "[response] {} {} {} {}",
+                        ctx.path(), ctx.queryString(), ctx.status(), ctx.result()
                 ))
                 .start(serverConfig.port());
     }

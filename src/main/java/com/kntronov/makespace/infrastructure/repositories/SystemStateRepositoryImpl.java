@@ -26,9 +26,9 @@ public class SystemStateRepositoryImpl implements SystemStateRepository {
 
     @Override
     public SystemState findByDate(LocalDate date) {
+        final var bookings = bookingRepository.findByDate(date);
         return dataSource.getLeanConnection().use(c -> {
             final var rooms = findAllRooms(c);
-            final var bookings = bookingRepository.findByDate(date);
             final var bufferTimes = findAllBufferTimes(c);
             return new SystemState(
                     date,
