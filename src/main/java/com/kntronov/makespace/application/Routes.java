@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -31,6 +32,23 @@ public class Routes {
                     final var request = CreateBookingRequest.validated(ctx).getOrThrow(Routes::createBadRequest);
                     final var response = context.getBookingsController().bookNextAvailableRoom(request);
                     ctx.status(201).json(response);
+                });
+                get(ctx -> {
+                    final var date = ctx.queryParamAsClass("date", LocalDate.class).getOrThrow(Routes::createBadRequest);
+                    final var response = context.getBookingsController().getAllBookings(date);
+                    ctx.status(200).json(response);
+                });
+                path("{id}", () -> {
+                    get(ctx -> {
+                        final var id = ctx.pathParamAsClass("id", UUID.class).getOrThrow(Routes::createBadRequest);
+                        final var response = context.getBookingsController().getBooking(id);
+                        ctx.status(200).json(response);
+                    });
+                    delete(ctx -> {
+                        final var id = ctx.pathParamAsClass("id", UUID.class).getOrThrow(Routes::createBadRequest);
+                        context.getBookingsController().deleteBooking(id);
+                        ctx.status(200);
+                    });
                 });
             });
             path("rooms", () -> {
@@ -68,6 +86,7 @@ public class Routes {
     public static void configureConverters() {
         JavalinValidation.register(LocalDate.class, s -> LocalDate.parse(s, dateFormatter));
         JavalinValidation.register(LocalTime.class, s -> LocalTime.parse(s, timeFormatter));
+        JavalinValidation.register(UUID.class, UUID::fromString);
     }
 
     private static ErrorResponse createErrorResponse(HttpError error) {

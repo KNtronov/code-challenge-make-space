@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class App {
-    private static final Logger requestLogger = LoggerFactory.getLogger("request-logger");
+    private static final Logger applicationLogger = LoggerFactory.getLogger("application-logger");
 
     public static void main(String[] args) {
         var config = ConfigLoader.loadConfigFromEnvVariables();
@@ -36,6 +36,10 @@ public class App {
         Javalin.create(App::configureJavalin)
                 .routes(() -> Routes.configureRoutes(context))
                 .exception(Exception.class, Routes::configureExceptionHandling)
+                .after(ctx -> applicationLogger.info(
+                        "[response] {} {} {}",
+                        ctx.path(), ctx.queryString(), ctx.body()
+                ))
                 .start(serverConfig.port());
     }
 
@@ -44,7 +48,7 @@ public class App {
         jsonMapper.registerModule(new JavaTimeModule());
         Routes.configureConverters();
         config.jsonMapper(new JavalinJackson(jsonMapper));
-        config.requestLogger.http((ctx, ms) -> requestLogger.info(
+        config.requestLogger.http((ctx, ms) -> applicationLogger.info(
                 "[request] {} {} {}",
                 ctx.path(), ctx.queryString(), ctx.body()
         ));
