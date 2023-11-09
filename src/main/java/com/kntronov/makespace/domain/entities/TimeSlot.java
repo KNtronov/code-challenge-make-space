@@ -28,6 +28,15 @@ public record TimeSlot(
         validateRange(start, end);
     }
 
+    /**
+     * Returns valid minute values.
+     *
+     * @return valid minute values as list
+     */
+    public static List<Integer> getValidMinutes() {
+        return validMinutes;
+    }
+
     private void validateSlotTime(LocalTime slot) {
         if (slot.getSecond() != 0 || slot.getNano() != 0) {
             throw new IllegalArgumentException("slot seconds and nano must be 0");
@@ -57,4 +66,5 @@ public record TimeSlot(
         var y = (this.end.isAfter(target.start));
         return x && y;
     }
+
 }

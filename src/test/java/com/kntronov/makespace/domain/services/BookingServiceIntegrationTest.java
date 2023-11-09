@@ -3,7 +3,7 @@ package com.kntronov.makespace.domain.services;
 import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
-import com.kntronov.makespace.domain.errors.NoRoomAvailableError;
+import com.kntronov.makespace.domain.errors.NoRoomAvailableException;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.infrastructure.repositories.BookingRepositoryImpl;
 import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
@@ -144,7 +144,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
             );
             final var result = subject.bookNextAvailableRoom(date, targetTimeSlot, 21);
             expectFailure(result, r ->
-                    assertThat(r).hasSameClassAs(new NoRoomAvailableError())
+                    assertThat(r).hasSameClassAs(new NoRoomAvailableException())
             );
         }
 
@@ -192,7 +192,7 @@ class BookingServiceIntegrationTest extends IntegrationTest {
             );
             final var result = subject.bookNextAvailableRoom(date, targetTimeSlot, 15);
             expectFailure(result, r ->
-                    assertThat(r).hasSameClassAs(new NoRoomAvailableError())
+                    assertThat(r).hasSameClassAs(new NoRoomAvailableException())
             );
         }
     }

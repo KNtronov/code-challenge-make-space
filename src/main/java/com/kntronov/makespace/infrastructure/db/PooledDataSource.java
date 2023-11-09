@@ -1,6 +1,6 @@
 package com.kntronov.makespace.infrastructure.db;
 
-import com.kntronov.makespace.infrastructure.errors.DataSourceConfigurationError;
+import com.kntronov.makespace.infrastructure.errors.DataSourceConfigurationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -23,7 +23,7 @@ public class PooledDataSource {
         try {
             DriverManager.registerDriver(myDriver);
         } catch (SQLException e) {
-            throw new DataSourceConfigurationError("Unable to load driver " + myDriver);
+            throw new DataSourceConfigurationException("Unable to load driver " + myDriver);
         }
     }
 
