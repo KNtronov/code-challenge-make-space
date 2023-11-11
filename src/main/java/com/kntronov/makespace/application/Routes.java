@@ -17,6 +17,9 @@ import java.util.UUID;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
+/**
+ * A wrapper over the Javalin DSL that defines roots and their handlers.
+ */
 public class Routes {
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

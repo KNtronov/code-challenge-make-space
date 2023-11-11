@@ -15,6 +15,9 @@ import com.kntronov.makespace.util.Result;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Controller responsible for bookings endpoints.
+ */
 public class BookingsController {
 
     private final BookingService bookingService;
@@ -42,7 +45,7 @@ public class BookingsController {
 
     public Nothing deleteBooking(UUID id) {
         return switch (bookingService.deleteBooking(id)) {
-            case Result.Success<Nothing> ignored -> new Nothing();
+            case Result.Success<Nothing> ignored -> Nothing.get();
             case Result.Failure<Nothing> failure -> {
                 switch (failure.error()) {
                     case RoomNotFoundException ignored ->

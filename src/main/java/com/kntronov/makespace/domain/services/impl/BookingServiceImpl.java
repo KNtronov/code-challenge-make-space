@@ -90,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
         return switch (getBooking(id)) {
             case Result.Success<Booking> ignored -> {
                 bookingRepository.delete(id);
-                yield Result.pure(new Nothing());
+                yield Result.pure(Nothing.get());
             }
             case Result.Failure<Booking> failure -> Result.fail(failure.error());
         };

@@ -8,6 +8,9 @@ import com.kntronov.makespace.domain.services.BookingService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Controller responsible for rooms endpoints.
+ */
 public class RoomsController {
 
     private final BookingService bookingService;

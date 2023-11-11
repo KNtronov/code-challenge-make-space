@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of the SystemStateRepositoryImpl interface that persists and reads data from a SQL database.
+ */
 public class SystemStateRepositoryImpl implements SystemStateRepository {
 
     private final PooledDataSource dataSource;

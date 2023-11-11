@@ -14,7 +14,7 @@ import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryI
 import com.zaxxer.hikari.HikariConfig;
 
 /**
- * Instantiates and wires application's dependencies.
+ * Instantiates, holds and wires application's dependencies.
  */
 public class AppContext {
 

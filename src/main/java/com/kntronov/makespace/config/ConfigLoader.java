@@ -5,6 +5,9 @@ import com.kntronov.makespace.config.errors.UnableToParseConfigValueTypeExceptio
 
 import java.util.function.Function;
 
+/**
+ * Utility class used to load the application configuration from env variables.
+ */
 public class ConfigLoader {
     private ConfigLoader() {
     }

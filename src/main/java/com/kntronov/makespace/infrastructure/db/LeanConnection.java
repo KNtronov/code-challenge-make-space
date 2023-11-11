@@ -6,6 +6,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * A wrapper over JDBC Connection that abstracts boilerplate to streamline code and converts checked SQLException
+ * into unchecked UncheckedSQLException.
+ */
 public class LeanConnection {
 
     private final Connection connection;

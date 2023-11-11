@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Implementation of the BookingRepository interface that persists and reads data from a SQL database.
+ */
 public class BookingRepositoryImpl implements BookingRepository {
 
     private final PooledDataSource dataSource;

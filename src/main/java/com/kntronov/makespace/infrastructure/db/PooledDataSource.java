@@ -7,6 +7,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * A wrapper around a pooled DB connection that exposes LeanConnection.
+ */
 public class PooledDataSource {
     private final HikariDataSource dataSource;
 

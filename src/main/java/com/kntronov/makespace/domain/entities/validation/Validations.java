@@ -1,5 +1,8 @@
 package com.kntronov.makespace.domain.entities.validation;
 
+/**
+ * Simple utility class with common entity validation checks.
+ */
 public class Validations {
 
     private Validations() {

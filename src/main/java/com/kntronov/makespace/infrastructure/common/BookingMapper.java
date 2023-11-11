@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+/**
+ * Maps domain entity Booking from DB ResultSet.
+ */
 public class BookingMapper {
     private BookingMapper() {
     }

@@ -40,9 +40,27 @@ public interface BookingService {
      */
     List<Room> getAvailableRooms(LocalDate date, TimeSlot timeSlot);
 
+    /**
+     * Retrieve a list of bookings filtered by date.
+     *
+     * @param date booking date
+     * @return list of filtered bookings
+     */
     List<Booking> getAllBookingsByDate(LocalDate date);
 
+    /**
+     * Delete a booking by id.
+     *
+     * @param id UUID
+     * @return Success if deletion is successful, Failure otherwise
+     */
     Result<Nothing> deleteBooking(UUID id);
 
+    /**
+     * Retrieve a booking by id.
+     *
+     * @param id UUID
+     * @return Success if retrieval is successful, Failure otherwise
+     */
     Result<Booking> getBooking(UUID id);
 }

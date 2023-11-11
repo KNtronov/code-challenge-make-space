@@ -2,6 +2,9 @@ package com.kntronov.makespace.application.errors;
 
 import java.util.List;
 
+/**
+ * HttpError is to be used in server's error handling as a common error response schema.
+ */
 public sealed interface HttpError {
 
     int code();
