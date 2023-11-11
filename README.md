@@ -165,7 +165,7 @@ Retrieves booking by id.
 
 Request
 
-`GET api/bookings/{bookingUuid}`
+`GET api/bookings/4c040e0c-c890-4139-a405-c8fa6654488e`
 
 Response
 
@@ -206,7 +206,7 @@ Deletes a booking by id.
 
 Request
 
-`DELETE api/bookings/{bookingUuid}`
+`DELETE api/bookings/4c040e0c-c890-4139-a405-c8fa6654488e`
 
 Response
 
