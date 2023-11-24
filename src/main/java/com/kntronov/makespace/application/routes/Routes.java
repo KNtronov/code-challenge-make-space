@@ -1,16 +1,12 @@
-package com.kntronov.makespace.application;
+package com.kntronov.makespace.application.routes;
 
-import com.kntronov.makespace.AppContext;
+import com.kntronov.makespace.application.AppContext;
 import com.kntronov.makespace.application.errors.HttpError;
 import com.kntronov.makespace.application.schema.CreateBookingRequest;
-import com.kntronov.makespace.application.schema.ErrorResponse;
-import io.javalin.http.Context;
-import io.javalin.validation.JavalinValidation;
 import io.javalin.validation.ValidationError;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -21,9 +17,6 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * A wrapper over the Javalin DSL that defines roots and their handlers.
  */
 public class Routes {
-
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     private Routes() {
     }
@@ -78,25 +71,4 @@ public class Routes {
         );
     }
 
-
-    public static void configureExceptionHandling(Exception e, Context context) {
-        switch (e) {
-            case HttpError error -> context.status(error.code()).json(createErrorResponse(error));
-            default -> createErrorResponse(new HttpError.InternalServerErrorException());
-        }
-    }
-
-    public static void configureConverters() {
-        JavalinValidation.register(LocalDate.class, s -> LocalDate.parse(s, dateFormatter));
-        JavalinValidation.register(LocalTime.class, s -> LocalTime.parse(s, timeFormatter));
-        JavalinValidation.register(UUID.class, UUID::fromString);
-    }
-
-    private static ErrorResponse createErrorResponse(HttpError error) {
-        return new ErrorResponse(
-                error.code(),
-                error.errorName(),
-                error.message()
-        );
-    }
 }

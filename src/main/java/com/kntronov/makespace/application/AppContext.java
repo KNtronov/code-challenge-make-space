@@ -1,4 +1,4 @@
-package com.kntronov.makespace;
+package com.kntronov.makespace.application;
 
 import com.kntronov.makespace.application.controllers.BookingsController;
 import com.kntronov.makespace.application.controllers.RoomsController;
@@ -6,6 +6,7 @@ import com.kntronov.makespace.config.AppConfig;
 import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
 import com.kntronov.makespace.domain.services.BookingService;
+import com.kntronov.makespace.domain.services.UUIDProvider;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.domain.services.impl.UUIDProviderImpl;
 import com.kntronov.makespace.infrastructure.db.PooledDataSource;
@@ -23,7 +24,7 @@ public class AppContext {
     private final BookingRepository bookingRepository;
     private final SystemStateRepository systemStateRepository;
 
-    private final UUIDProviderImpl uuidProvider;
+    private final UUIDProvider uuidProvider;
     private final BookingService bookingService;
 
     private final BookingsController bookingsController;

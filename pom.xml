@@ -118,7 +118,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${maven.exec.version}</version>
                 <configuration>
-                    <mainClass>com.kntronov.makespace.App</mainClass>
+                    <mainClass>com.kntronov.makespace.application.Launcher</mainClass>
                 </configuration>
             </plugin>
         </plugins>
