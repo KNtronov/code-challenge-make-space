@@ -55,8 +55,6 @@ Rules
 ## Known Issues and TODOs
 
 - Hook up a CI pipeline with linters and test coverage checks.
-- Integration tests for http API, it will require a re-design of the Javalin server and AppContext into a standalone
-  testable unit.
 - User management with RBAC or PBAC, ideally integrating with auth0.
 - Booking re-scheduling, will probably benefit to redesign for CQRS.
 - Document the api with OpenAPI spec.
