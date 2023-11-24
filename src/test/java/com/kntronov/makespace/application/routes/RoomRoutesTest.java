@@ -1,6 +1,5 @@
 package com.kntronov.makespace.application.routes;
 
-import com.kntronov.makespace.application.AppErrors;
 import com.kntronov.makespace.application.JavalinTestApp;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
