@@ -8,9 +8,9 @@ public class Launcher {
 
     public static void main(String[] args) {
         var config = ConfigLoader.loadConfigFromEnvVariables();
-        var context = new AppContext(config);
+        var context = AppContext.createDefault(config);
         var app = new JavalinApp(context, config.serverConfig());
-        runMigrations(context.getDataSource());
+        runMigrations(context.dataSource());
         app.start();
     }
 

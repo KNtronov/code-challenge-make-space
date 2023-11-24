@@ -3,10 +3,6 @@ package com.kntronov.makespace.application;
 import com.kntronov.makespace.application.controllers.BookingsController;
 import com.kntronov.makespace.application.controllers.RoomsController;
 import com.kntronov.makespace.config.AppConfig;
-import com.kntronov.makespace.domain.repositories.BookingRepository;
-import com.kntronov.makespace.domain.repositories.SystemStateRepository;
-import com.kntronov.makespace.domain.services.BookingService;
-import com.kntronov.makespace.domain.services.UUIDProvider;
 import com.kntronov.makespace.domain.services.impl.BookingServiceImpl;
 import com.kntronov.makespace.domain.services.impl.UUIDProviderImpl;
 import com.kntronov.makespace.infrastructure.db.PooledDataSource;
@@ -15,64 +11,41 @@ import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryI
 import com.zaxxer.hikari.HikariConfig;
 
 /**
- * Instantiates, holds and wires application's dependencies.
+ * Holds application facing dependencies.
  */
-public class AppContext {
+public record AppContext(
+        PooledDataSource dataSource,
+        BookingsController bookingsController,
+        RoomsController roomsController
+) {
 
-    private final PooledDataSource dataSource;
+    /**
+     * Create and wire default dependencies to be used in a normal app execution
+     *
+     * @param config configuration
+     * @return application context with default dependencies
+     */
+    public static AppContext createDefault(AppConfig config) {
+        final var dataSource = setUpDatabaseDataSource(config.dbConfig());
 
-    private final BookingRepository bookingRepository;
-    private final SystemStateRepository systemStateRepository;
+        final var uuidProvider = new UUIDProviderImpl();
 
-    private final UUIDProvider uuidProvider;
-    private final BookingService bookingService;
+        final var bookingRepository = new BookingRepositoryImpl(dataSource);
+        final var systemStateRepository = new SystemStateRepositoryImpl(dataSource, bookingRepository);
 
-    private final BookingsController bookingsController;
-    private final RoomsController roomsController;
+        final var bookingService = new BookingServiceImpl(uuidProvider, systemStateRepository, bookingRepository);
 
-    public AppContext(AppConfig config) {
-        this.dataSource = setUpDatabaseDataSource(config.dbConfig());
+        final var bookingsController = new BookingsController(bookingService);
+        final var roomsController = new RoomsController(bookingService);
 
-        this.uuidProvider = new UUIDProviderImpl();
-
-        this.bookingRepository = new BookingRepositoryImpl(dataSource);
-        this.systemStateRepository = new SystemStateRepositoryImpl(dataSource, bookingRepository);
-
-        this.bookingService = new BookingServiceImpl(uuidProvider, systemStateRepository, bookingRepository);
-
-        this.bookingsController = new BookingsController(bookingService);
-        this.roomsController = new RoomsController(bookingService);
+        return new AppContext(dataSource, bookingsController, roomsController);
     }
 
-    private PooledDataSource setUpDatabaseDataSource(AppConfig.DBConfig config) {
+    private static PooledDataSource setUpDatabaseDataSource(AppConfig.DBConfig config) {
         final var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.url());
         hikariConfig.setUsername(config.username());
         hikariConfig.setPassword(config.password());
         return new PooledDataSource(hikariConfig);
-    }
-
-    public PooledDataSource getDataSource() {
-        return dataSource;
-    }
-
-    public BookingRepository getBookingRepository() {
-        return bookingRepository;
-    }
-
-    public SystemStateRepository getSystemStateRepository() {
-        return systemStateRepository;
-    }
-
-    public BookingService getBookingService() {
-        return bookingService;
-    }
-
-    public BookingsController getBookingsController() {
-        return bookingsController;
-    }
-
-    public RoomsController getRoomsController() {
-        return roomsController;
     }
 }

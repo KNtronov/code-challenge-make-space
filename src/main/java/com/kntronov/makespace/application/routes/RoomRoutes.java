@@ -21,7 +21,7 @@ public class RoomRoutes {
                 final var date = ctx.queryParamAsClass("date", LocalDate.class).getOrThrow(RouteCommons::createBadRequestException);
                 final var start = ctx.queryParamAsClass("from", LocalTime.class).getOrThrow(RouteCommons::createBadRequestException);
                 final var end = ctx.queryParamAsClass("to", LocalTime.class).getOrThrow(RouteCommons::createBadRequestException);
-                final var response = context.getRoomsController().getAvailableRooms(date, start, end);
+                final var response = context.roomsController().getAvailableRooms(date, start, end);
                 ctx.status(200).json(response);
             });
         });
