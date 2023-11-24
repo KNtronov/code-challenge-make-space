@@ -10,6 +10,7 @@ import com.kntronov.makespace.infrastructure.repositories.BookingRepositoryImpl;
 import com.kntronov.makespace.infrastructure.repositories.SystemStateRepositoryImpl;
 import com.kntronov.makespace.testing.IntegrationTest;
 import com.kntronov.makespace.testing.Mocks;
+import com.kntronov.makespace.testing.TestTags;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -25,7 +26,7 @@ import static com.kntronov.makespace.testing.ResultTesting.expectSuccess;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("BookingService Integration Test")
-@Tag("integration")
+@Tag(TestTags.INTEGRATION_TEST)
 class BookingServiceIntegrationTest extends IntegrationTest {
 
     private static final UUID bookingId1 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc1111");

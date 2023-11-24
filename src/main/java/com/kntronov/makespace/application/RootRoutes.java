@@ -1,6 +1,4 @@
-package com.kntronov.makespace.application.routes;
-
-import com.kntronov.makespace.application.AppContext;
+package com.kntronov.makespace.application;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 

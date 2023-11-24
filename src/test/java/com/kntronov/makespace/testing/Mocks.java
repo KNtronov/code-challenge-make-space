@@ -1,10 +1,15 @@
 package com.kntronov.makespace.testing;
 
 import com.kntronov.makespace.domain.entities.Booking;
+import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.SystemState;
+import com.kntronov.makespace.domain.entities.TimeSlot;
 import com.kntronov.makespace.domain.repositories.BookingRepository;
 import com.kntronov.makespace.domain.repositories.SystemStateRepository;
+import com.kntronov.makespace.domain.services.BookingService;
 import com.kntronov.makespace.domain.services.UUIDProvider;
+import com.kntronov.makespace.util.Nothing;
+import com.kntronov.makespace.util.Result;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -69,6 +74,34 @@ public class Mocks {
             } else {
                 throw new MethodNotMockedException();
             }
+        }
+    }
+
+    public static abstract class BookingServiceMock implements BookingService {
+
+        @Override
+        public Result<Booking> bookNextAvailableRoom(LocalDate date, TimeSlot timeSlot, int numPeople) {
+            throw new MethodNotMockedException();
+        }
+
+        @Override
+        public List<Room> getAvailableRooms(LocalDate date, TimeSlot timeSlot) {
+            throw new MethodNotMockedException();
+        }
+
+        @Override
+        public List<Booking> getAllBookingsByDate(LocalDate date) {
+            throw new MethodNotMockedException();
+        }
+
+        @Override
+        public Result<Nothing> deleteBooking(UUID id) {
+            throw new MethodNotMockedException();
+        }
+
+        @Override
+        public Result<Booking> getBooking(UUID id) {
+            throw new MethodNotMockedException();
         }
     }
 

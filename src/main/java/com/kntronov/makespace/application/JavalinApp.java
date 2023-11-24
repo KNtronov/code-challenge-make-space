@@ -3,7 +3,6 @@ package com.kntronov.makespace.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kntronov.makespace.application.errors.HttpError;
-import com.kntronov.makespace.application.routes.RootRoutes;
 import com.kntronov.makespace.application.schema.ErrorResponse;
 import com.kntronov.makespace.config.AppConfig;
 import io.javalin.Javalin;

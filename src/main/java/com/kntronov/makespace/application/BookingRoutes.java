@@ -1,6 +1,5 @@
-package com.kntronov.makespace.application.routes;
+package com.kntronov.makespace.application;
 
-import com.kntronov.makespace.application.AppContext;
 import com.kntronov.makespace.application.schema.CreateBookingRequest;
 
 import java.time.LocalDate;

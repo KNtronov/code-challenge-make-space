@@ -1,6 +1,4 @@
-package com.kntronov.makespace.application.routes;
-
-import com.kntronov.makespace.application.AppContext;
+package com.kntronov.makespace.application;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
