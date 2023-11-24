@@ -1,0 +1,45 @@
+package com.kntronov.makespace.application.routes;
+
+import com.kntronov.makespace.application.AppContext;
+import com.kntronov.makespace.application.schema.CreateBookingRequest;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static io.javalin.apibuilder.ApiBuilder.*;
+
+/**
+ * DSL definition for /bookings routes.
+ */
+public class BookingRoutes {
+    private BookingRoutes() {
+
+    }
+
+    public static void configure(AppContext context) {
+        path("bookings", () -> {
+            post("create-best-matching", ctx -> {
+                final var request = CreateBookingRequest.validated(ctx).getOrThrow(RouteCommons::createBadRequestException);
+                final var response = context.getBookingsController().bookNextAvailableRoom(request);
+                ctx.status(201).json(response);
+            });
+            get(ctx -> {
+                final var date = ctx.queryParamAsClass("date", LocalDate.class).getOrThrow(RouteCommons::createBadRequestException);
+                final var response = context.getBookingsController().getAllBookings(date);
+                ctx.status(200).json(response);
+            });
+            path("{id}", () -> {
+                get(ctx -> {
+                    final var id = ctx.pathParamAsClass("id", UUID.class).getOrThrow(RouteCommons::createBadRequestException);
+                    final var response = context.getBookingsController().getBooking(id);
+                    ctx.status(200).json(response);
+                });
+                delete(ctx -> {
+                    final var id = ctx.pathParamAsClass("id", UUID.class).getOrThrow(RouteCommons::createBadRequestException);
+                    context.getBookingsController().deleteBooking(id);
+                    ctx.status(200);
+                });
+            });
+        });
+    }
+}

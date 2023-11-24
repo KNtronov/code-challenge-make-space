@@ -3,7 +3,7 @@ package com.kntronov.makespace.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.kntronov.makespace.application.errors.HttpError;
-import com.kntronov.makespace.application.routes.Routes;
+import com.kntronov.makespace.application.routes.RootRoutes;
 import com.kntronov.makespace.application.schema.ErrorResponse;
 import com.kntronov.makespace.config.AppConfig;
 import io.javalin.Javalin;
@@ -32,7 +32,7 @@ public class JavalinApp {
     public JavalinApp(AppContext context, AppConfig.ServerConfig config) {
         this.config = config;
         this.javalin = Javalin.create(this::configureJavalin)
-                .routes(() -> Routes.configureRoutes(context))
+                .routes(() -> RootRoutes.configure(context))
                 .exception(Exception.class, this::configureExceptionHandling)
                 .after(ctx -> applicationLogger.info(
                         "[response] {} {} {} {}",
