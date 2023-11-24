@@ -1,5 +1,7 @@
-package com.kntronov.makespace.application;
+package com.kntronov.makespace.application.routes;
 
+import com.kntronov.makespace.application.AppErrors;
+import com.kntronov.makespace.application.JavalinTestApp;
 import com.kntronov.makespace.domain.entities.Booking;
 import com.kntronov.makespace.domain.entities.Room;
 import com.kntronov.makespace.domain.entities.TimeSlot;
@@ -30,7 +32,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("BookingRoutes Integration Test")
 @Tag(TestTags.INTEGRATION_TEST)
-class BookingsTest {
+class BookingRoutesTest {
 
     private static final UUID bookingId1 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc1111");
     private static final UUID bookingId2 = UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc2222");

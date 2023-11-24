@@ -1,4 +1,4 @@
-package com.kntronov.makespace.application;
+package com.kntronov.makespace.application.routes;
 
 import com.kntronov.makespace.application.errors.HttpError;
 import io.javalin.validation.ValidationError;
